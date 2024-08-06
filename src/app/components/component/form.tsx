@@ -55,21 +55,29 @@ export function LeadForm() {
     }
   };
 
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'lscivs0l'); // Replace with your upload preset
+
+    const response = await axios.post('https://api.cloudinary.com/v1_1/dxcer6hbg/image/upload', formData);
+    return response.data.secure_url;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true); // Set loading state to true
 
-    const formDataObj = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (formData[key as keyof FormData] !== null) {
-        formDataObj.append(key, formData[key as keyof FormData] as any);
-      }
-    });
-
     try {
-      const res = await axios.post('/api/leads', formDataObj, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const idFrontUrl = formData.idFront ? await uploadImage(formData.idFront) : null;
+      const idBackUrl = formData.idBack ? await uploadImage(formData.idBack) : null;
+
+      const res = await axios.post('/api/leads', {
+        ...formData,
+        idFrontUrl,
+        idBackUrl
       });
+
       console.log('Lead created:', res.data);
       toast.success('Lead created successfully!');
     } catch (error) {
@@ -79,6 +87,7 @@ export function LeadForm() {
       setLoading(false); // Set loading state to false after submission
     }
   };
+
 
   return (
     <div className="mx-auto border border-gray-600 rounded-xl p-8 max-w-4xl space-y-8">
