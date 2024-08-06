@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
+import { toast, Toaster } from 'sonner'
 
 interface FormData {
   officerName: string;
@@ -57,13 +58,16 @@ export function LeadForm() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       console.log('Lead created:', res.data);
+      toast.success('Lead created successfully!');
     } catch (error) {
+      toast.error('Error creating lead.');
       console.error('Error creating lead:', error);
     }
   };
 
   return (
     <div className="mx-auto border border-gray-600 rounded-xl p-8 max-w-4xl space-y-8">
+      <Toaster />
       <div className="flex justify-center">
         <img src="https://cdrgaruda.vercel.app/logo.png" className="h-28" />
       </div>
