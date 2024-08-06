@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
-import { toast, Toaster } from 'sonner'
+import { toast, Toaster } from 'sonner';
 
 interface FormData {
   officerName: string;
@@ -19,6 +19,15 @@ interface FormData {
   idFront: File | null;
   idBack: File | null;
 }
+
+const states = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
+  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
+  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
+  "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli",
+  "Daman and Diu", "Lakshadweep", "Delhi", "Puducherry"
+];
 
 export function LeadForm() {
   const [formData, setFormData] = useState<FormData>({
@@ -34,17 +43,21 @@ export function LeadForm() {
     idBack: null,
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value, files } = e.target;
-    if (files) {
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const { id, value, files } = e.target as HTMLInputElement;
+
+    if ('files' in e.target && files) {
       setFormData((prev) => ({ ...prev, [id]: files[0] }));
-    } else {
+    } else if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) {
       setFormData((prev) => ({ ...prev, [id]: value }));
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true); // Set loading state to true
 
     const formDataObj = new FormData();
     Object.keys(formData).forEach((key) => {
@@ -62,6 +75,8 @@ export function LeadForm() {
     } catch (error) {
       toast.error('Error creating lead.');
       console.error('Error creating lead:', error);
+    } finally {
+      setLoading(false); // Set loading state to false after submission
     }
   };
 
@@ -97,9 +112,14 @@ export function LeadForm() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
+          <div className="space-y-2 grid grid-cols-1">
             <Label htmlFor="state">State</Label>
-            <Input className="text-black" id="state" value={formData.state} onChange={handleChange} placeholder="Enter state" />
+            <select id="state" value={formData.state} onChange={handleChange} className="text-black w-full mt-1 px-2 rounded">
+              <option value="" disabled>Select a state</option>
+              {states.map((state) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="district">District</Label>
@@ -127,7 +147,9 @@ export function LeadForm() {
 
         <div className="flex justify-between">
           <Button variant="outline" className="bg-gray-700">Discard</Button>
-          <Button type="submit" className="bg-[#00A79D]">Submit</Button>
+          <Button type="submit" className="bg-[#00A79D]" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </Button>
         </div>
       </form>
       <div className="bg-muted p-4 rounded-lg text-center">
