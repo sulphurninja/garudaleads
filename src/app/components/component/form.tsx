@@ -154,11 +154,11 @@ export function LeadForm() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="idFront">ID Card Front Side</Label>
+            <Label htmlFor="idFront">Police ID Front Side</Label>
             <Input className="text-black" id="idFront" onChange={handleChange} type="file" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="idBack">ID Card Back Side</Label>
+            <Label htmlFor="idBack">Police ID Back Side</Label>
             <Input className="text-black" id="idBack" onChange={handleChange} type="file" />
           </div>
         </div>
