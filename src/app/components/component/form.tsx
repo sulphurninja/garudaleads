@@ -44,6 +44,7 @@ export function LeadForm() {
   });
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { id, value, files } = e.target as HTMLInputElement;
@@ -80,6 +81,19 @@ export function LeadForm() {
 
       console.log('Lead created:', res.data);
       toast.success('Lead created successfully!');
+      setSubmitted(true); // Mark as submitted
+      setFormData({
+        officerName: '',
+        designation: '',
+        policeStation: '',
+        whatsappNumber: '',
+        state: '',
+        district: '',
+        email: '',
+        referredBy: '',
+        idFront: null,
+        idBack: null,
+      });
     } catch (error) {
       toast.error('Error creating lead.');
       console.error('Error creating lead:', error);
@@ -87,7 +101,6 @@ export function LeadForm() {
       setLoading(false); // Set loading state to false after submission
     }
   };
-
 
   return (
     <div className="mx-auto border border-gray-600 rounded-xl p-8 max-w-4xl space-y-8">
@@ -156,7 +169,7 @@ export function LeadForm() {
 
         <div className="flex justify-between">
           <Button variant="outline" className="bg-gray-700">Discard</Button>
-          <Button type="submit" className="bg-[#00A79D]" disabled={loading}>
+          <Button type="submit" className="bg-[#00A79D]" disabled={loading || submitted}>
             {loading ? 'Submitting...' : 'Submit'}
           </Button>
         </div>
